@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DatePicker from 'react-datepicker';
 import './index.css'; // 引入樣式文件
 const CustomSelect = ({ options, onChange ,value}) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -57,11 +58,11 @@ const AddDiaryPage = () => {
   const [diaries, setDiaries] = useState([]);
   const [content, setContent] = useState('');
   const [weather, setWeather] = useState(''); // 新增狀態來儲存選擇的天氣
-
+  const [date, setDate] = useState(new Date());
   const handleSubmit = (e) => {
     e.preventDefault(); // 防止頁面重新加載
     const newDiary = {
-      date: new Date(),
+      date: date,
       content: content,
       weather: weather
     };
@@ -69,6 +70,7 @@ const AddDiaryPage = () => {
     console.log(diaries);
     setContent(''); // 提交後清空輸入框
     setWeather('');
+    setDate(new Date()); // 清空日期
 
   };
   const handleContentChange = (e) => {
@@ -77,6 +79,7 @@ const AddDiaryPage = () => {
   const handleWeatherChange = (value) => {
     setWeather(value); 
   };
+  
   useEffect(() => {
     if (diaries.length > 0){
         alert("新增成功");
@@ -89,6 +92,16 @@ const AddDiaryPage = () => {
       <h1>新增日記</h1>
       <form onSubmit={handleSubmit}>
       <label>
+      <input style={{ visibility: 'hidden' }} />
+        <div>
+          日期<br></br><br></br>
+          <DatePicker 
+              selected={date}
+              onChange={(date) => setDate(date)}
+              dateFormat="yyyy/MM/dd"
+              className="react-datepicker-wrapper"
+          /><br></br><br></br>
+        </div>
         內容<br></br><br></br>
         <input value={content} onChange={handleContentChange} placeholder="請輸入文本" /><br></br><br></br>
         天氣<br></br><br></br>
