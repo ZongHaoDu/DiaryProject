@@ -1,13 +1,30 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
-import AddDiaryPage from './AddDiaryPage';
+import DiaryPage from './DiaryPage';
+import EditPage from './EditPage';
+import ViewDiaryPage from './ViewDiaryPage'; // 確保引入 ViewDiaryPage
+import HomePage from './HomePage'; // 確保引入 HomePage
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // 確保正確引入 Router, Routes, Route
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/add-diary" element={<DiaryPage mode={"add"}/>} />
+        <Route path="/view/:id" element={<ViewDiaryPage />} />
+        <Route path="/edit/:id" element={<EditPage />} />
+      </Routes>
+    </Router>
+  );
+};
+
 root.render(
   <React.StrictMode>
-    <AddDiaryPage />
+    <App />
   </React.StrictMode>
 );
 
