@@ -4,55 +4,55 @@ import 'react-datepicker/dist/react-datepicker.css'; // 引入 DatePicker 樣式
 import './index.css'; 
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-const TagInput = ({ stillInput,setStillInput,mode,output, setOutput }) => {
-  const [inputValue, setInputValue] = useState('');
-  if(inputValue!=''){
-    setStillInput(true);
-  }else{
-    setStillInput(false);
-  }
+
+
+const AddButton = ({ inputValue,setInputValue,mode,outputValue,setOutputValue}) => {
+
   const handleAddTag = () => {
-    if (inputValue && !output.includes(inputValue)) {
-      setOutput([...output, inputValue]);
-      setInputValue('');
+    
+    if (inputValue && !outputValue.includes(inputValue)) {
+      let canSubmit = true;
+      if (Object.keys(inputValue).length > 0) {
+        for (const [key, value] of Object.entries(inputValue)) {
+          if(value=='') canSubmit = false;
+        }
+      }
+      if(canSubmit){
+        setOutputValue([...outputValue, inputValue]);
+        setInputValue('');  
+      }
+      else{
+        alert("有項目是空的");
+      }
+      
     }
   };
   
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-  };
+
   
   return (
     <div className="flex flex-col space-y-2">
       {mode !== 'view' && (
         <div className="flex space-x-2">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            placeholder="輸入標籤"
-            className="border border-gray-300 rounded p-2 flex-1"
-            
-          />
           <button
             type="button"
             onClick={handleAddTag}
             className="bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600"
           >
-            添加標籤
+            添加
           </button>
         </div>
       )}
       
-      <div className="flex flex-wrap gap-2 py-2">
-        {output.map((tag, index) => (
+      {/* <div className="flex flex-wrap gap-2 py-2">
+        {outputValue.map((item, index) => (
           <div key={index} className="h-6 bg-purple-600 text-white px-3 py-5 rounded-full flex items-center space-x-2">
-            <span>{tag}</span>
+            <span>{item}</span>
             {mode !== 'view' && (
               <button
                 type='button'
                 className="text-white hover:text-red-700"
-                onClick={() => setOutput(output.filter((t) => t !== tag))}
+                onClick={() => setOutputValue(outputValue.filter((t) => t !== item))}
                 
               >
                 x
@@ -60,10 +60,145 @@ const TagInput = ({ stillInput,setStillInput,mode,output, setOutput }) => {
             )}
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
+const ShowDivs = ({outputValue,setOutputValue,mode,showtype}) =>{
+  return(
+    <div className="flex flex-wrap gap-2 py-2">
+      {outputValue.map((item, index) => (
+        <div key={index} className="h-6 bg-purple-600 text-white px-3 py-5 rounded-full flex items-center space-x-2">
+          {showtype==='cost'?<span>{item.name} - {item.type} - ${item.price}</span>:<span>{item} </span>}
+          {mode !== 'view' && (
+            <button
+              type='button'
+              className="text-white hover:text-red-700"
+              onClick={() => setOutputValue(outputValue.filter((t) => t !== item))}
+              
+            >
+              x
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+const AddTag = ({ stillInput, setStillInput, mode, outputValue, setOutputValue }) => {
+  const [inputValue, setInputValue] = useState('');
+  
+  useEffect(() => {
+    if(inputValue !== ''){
+      setStillInput(true);
+    } else {
+      setStillInput(false);
+    }
+  }, [inputValue, setStillInput]);
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  return (
+    <div className="flex flex-col space-y-2">
+      <div className="flex space-x-2">
+        {mode !== 'view' && (
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            placeholder="輸入標籤"
+            className="border border-gray-300 rounded p-2 flex-1"
+          />
+        )}
+        <AddButton
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          mode={mode}
+          outputValue={outputValue}
+          setOutputValue={setOutputValue}
+        />
+      </div>
+      <ShowDivs
+        className="text-white hover:text-red-700"
+        outputValue={outputValue}
+        setOutputValue={setOutputValue}
+        mode={mode}
+        showtype = 'tag'
+      />
+    </div>
+  );
+};
+const AddCost = ({ stillInput, setStillInput, mode, outputValue, setOutputValue }) => {
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [type, setType] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  useEffect(() => {
+    if (inputValue === '') {
+      setName('');
+      setPrice('');
+      setType('');
+    }
+  }, [inputValue]);
+  useEffect(() => {
+    console.log(type);
+    const newCost = {
+      name: name,
+      price: price,
+      type: type
+    };
+    setInputValue(newCost);
+  }, [name, price,type]);
+
+  return (
+    <div className="flex flex-col space-y-4 border border-purple-100 p-5">
+      {mode !== 'view' && (
+        <>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="輸入名稱"
+            className="border border-gray-300 rounded p-2"
+          />
+          <input
+            type="text"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder="輸入價錢"
+            className="border border-gray-300 rounded p-2"
+          />
+          <CustomSelect
+            className="border border-gray-300 rounded p-2"
+            options={['午餐', '晚餐', '飲料', '交通', '點心', '娛樂']}
+            onChange={(e) => setType(e.target.value)} // 假設 e 是事件對象
+            value={type}
+            mode={mode}
+          />
+        </>
+      )}
+      <AddButton
+        className=""
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        mode={mode}
+        outputValue={outputValue}
+        setOutputValue={setOutputValue}
+      />
+      <ShowDivs
+        outputValue={outputValue}
+        setOutputValue={setOutputValue}
+        mode={mode}
+        showtype='cost'
+      />
+    </div>
+  );
+};
+
+
+
 
 const CustomSelect = ({ options, onChange, value ,mode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -93,7 +228,7 @@ const CustomSelect = ({ options, onChange, value ,mode }) => {
   };
   
   return (
-    <div className="relative" >
+    <div className="relative w-full" >
       <div
         className="z-0 bg-white border border-gray-300 rounded p-2 cursor-pointer flex items-center justify-between"
         onClick={toggleOptions}
@@ -153,6 +288,7 @@ const DiaryPage = ({mode = ''}) => {
   const [date, setDate] = useState(new Date());
   const [tags, setTags] = useState([]);
   const [stillInput, setStillInput] = useState(false);
+  const [cost, setCost] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
     if ((mode === 'edit' || mode === 'view') ){
@@ -167,6 +303,7 @@ const DiaryPage = ({mode = ''}) => {
         setTags(selectedDiary.mood);
         setDate(new Date(selectedDiary.date));
         setTags(selectedDiary.tags);
+        setCost(selectedDiary.cost);
       }
     }
   }, [mode, id]);
@@ -184,7 +321,8 @@ const DiaryPage = ({mode = ''}) => {
       content: content,
       weather: weather,
       mood: mood,
-      tags: tags
+      tags: tags,
+      cost:cost
     };
     setDiaries([...diaries, newDiary]);
     // 獲取已儲存的日記
@@ -274,7 +412,11 @@ const DiaryPage = ({mode = ''}) => {
           </div>
           <div>
             <p className='my-3'>標籤</p>
-            <TagInput stillInput={stillInput} setStillInput={setStillInput} mode={mode} output={tags} setOutput={setTags} disabled={mode === 'view'}/>
+            <AddTag stillInput={stillInput} setStillInput={setStillInput} mode={mode} outputValue={tags} setOutputValue={setTags} disabled={mode === 'view'}/>
+          </div>
+          <div>
+            <p className='my-3'>花費</p>
+            <AddCost stillInput={stillInput} setStillInput={setStillInput} mode={mode} outputValue={cost} setOutputValue={setCost} disabled={mode === 'view'}/>
           </div>
           <button
             type="submit"
