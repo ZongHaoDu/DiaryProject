@@ -4,12 +4,16 @@ import 'react-datepicker/dist/react-datepicker.css'; // 引入 DatePicker 樣式
 import './index.css'; 
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-const TagInput = ({ mode,tags, setTags }) => {
+const TagInput = ({ stillInput,setStillInput,mode,output, setOutput }) => {
   const [inputValue, setInputValue] = useState('');
-  
+  if(inputValue!=''){
+    setStillInput(true);
+  }else{
+    setStillInput(false);
+  }
   const handleAddTag = () => {
-    if (inputValue && !tags.includes(inputValue)) {
-      setTags([...tags, inputValue]);
+    if (inputValue && !output.includes(inputValue)) {
+      setOutput([...output, inputValue]);
       setInputValue('');
     }
   };
@@ -41,14 +45,14 @@ const TagInput = ({ mode,tags, setTags }) => {
       )}
       
       <div className="flex flex-wrap gap-2 py-2">
-        {tags.map((tag, index) => (
+        {output.map((tag, index) => (
           <div key={index} className="h-6 bg-purple-600 text-white px-3 py-5 rounded-full flex items-center space-x-2">
             <span>{tag}</span>
             {mode !== 'view' && (
               <button
                 type='button'
                 className="text-white hover:text-red-700"
-                onClick={() => setTags(tags.filter((t) => t !== tag))}
+                onClick={() => setOutput(output.filter((t) => t !== tag))}
                 
               >
                 x
@@ -91,7 +95,7 @@ const CustomSelect = ({ options, onChange, value ,mode }) => {
   return (
     <div className="relative" >
       <div
-        className="border border-gray-300 rounded p-2 cursor-pointer flex items-center justify-between"
+        className="z-0 bg-white border border-gray-300 rounded p-2 cursor-pointer flex items-center justify-between"
         onClick={toggleOptions}
         
       >
@@ -104,7 +108,7 @@ const CustomSelect = ({ options, onChange, value ,mode }) => {
       </div>
       
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 border border-gray-300 bg-white rounded shadow-lg w-full max-h-40 overflow-y-auto">
+        <div className="z-50 absolute top-full left-0 mt-1 border border-gray-300 bg-white rounded shadow-lg w-full max-h-40 overflow-y-auto">
           <div className="p-2 flex space-x-1">
             <input
               type="text"
@@ -145,8 +149,10 @@ const DiaryPage = ({mode = ''}) => {
   const [diaries, setDiaries] = useState([]);
   const [content, setContent] = useState('');
   const [weather, setWeather] = useState('');
+  const [mood, setMood] = useState('');
   const [date, setDate] = useState(new Date());
   const [tags, setTags] = useState([]);
+  const [stillInput, setStillInput] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     if ((mode === 'edit' || mode === 'view') ){
@@ -156,7 +162,9 @@ const DiaryPage = ({mode = ''}) => {
       
       if (selectedDiary) {
         setContent(selectedDiary.content);
+        setMood(selectedDiary.mood);
         setWeather(selectedDiary.weather);
+        setTags(selectedDiary.mood);
         setDate(new Date(selectedDiary.date));
         setTags(selectedDiary.tags);
       }
@@ -167,10 +175,15 @@ const DiaryPage = ({mode = ''}) => {
       navigate(`/edit/${id}`);
     }
     e.preventDefault();
+    if(stillInput){
+      alert("標籤輸入框還有東西");
+      return;
+    }
     const newDiary = {
       date: date.toLocaleDateString('en-CA'),
       content: content,
       weather: weather,
+      mood: mood,
       tags: tags
     };
     setDiaries([...diaries, newDiary]);
@@ -184,8 +197,15 @@ const DiaryPage = ({mode = ''}) => {
     localStorage.setItem('diaries', JSON.stringify([...existingDiaries, newDiary]));
     setContent('');
     setWeather('');
+    setMood('');
     setDate(new Date());
     setTags([]);
+    
+    if(mode!=='view'){
+      alert("新增成功");
+      navigate(`/`);
+    }
+    
   };
   
   const handleContentChange = (e) => {
@@ -195,26 +215,21 @@ const DiaryPage = ({mode = ''}) => {
   const handleWeatherChange = (value) => {
     setWeather(value);
   };
-  
-  useEffect(() => {
-    if (diaries.length > 0) {
-      if(mode==='add')
-      {
-        alert("新增成功");
-      }
-      else if(mode==='edit')
-      {
-        alert("編輯成功");
-      }
-      
-      console.log('Updated Diaries:', diaries);
-    }
-  }, [diaries]);
+  const handleMoodChange = (value) => {
+    setMood(value);
+  };
   
   return (
-    <div className=" shadow-lg max-w-4xl mx-auto p-6 ">
-      <div className=" m-8">
-        <h1 className="p-1 text-2xl font-bold ">
+    <div className="rounded-lg my-10 shadow-custom-shadow  max-w-4xl mx-auto p-6 relative">
+      <button
+        type='button'
+        className="absolute top-0 right-0 mt-10 mr-10 bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600"
+        onClick={() => navigate(`/`)} 
+      >
+        x
+      </button>
+      <div className="m-8">
+        <h1 className="p-1 text-2xl font-bold">
           {mode === 'add' ? '新增日記' : mode === 'edit' ? '編輯日記' : mode === 'view' ? '查看日記' : '未知模式'}
         </h1>
         <form onSubmit={handleSubmit} className="m-2">
@@ -226,7 +241,6 @@ const DiaryPage = ({mode = ''}) => {
               dateFormat="yyyy/MM/dd"
               className="border border-gray-300 rounded p-2 w-full bg-white"
               disabled={mode === 'view'}
-              
             />
           </div>
           <div>
@@ -235,6 +249,15 @@ const DiaryPage = ({mode = ''}) => {
               options={['超熱', '超冷', '晴天', '多雲', '下雨', 'test', 'test', 'test', 'test']}
               onChange={handleWeatherChange}
               value={weather}
+              mode={mode}
+            />
+          </div>
+          <div>
+            <p className='my-3'>心情</p>
+            <CustomSelect
+              options={['超興奮', '開心', '普通', '憂鬱', '不起勁', '生氣']}
+              onChange={handleMoodChange}
+              value={mood}
               mode={mode}
             />
           </div>
@@ -251,17 +274,18 @@ const DiaryPage = ({mode = ''}) => {
           </div>
           <div>
             <p className='my-3'>標籤</p>
-            <TagInput mode={mode} tags={tags} setTags={setTags} disabled={mode === 'view'}/>
+            <TagInput stillInput={stillInput} setStillInput={setStillInput} mode={mode} output={tags} setOutput={setTags} disabled={mode === 'view'}/>
           </div>
           <button
             type="submit"
-            className=" my-5 bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600"
+            className="my-5 bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600"
           >
-            <p className='font-semibold '>{mode==='view'?'編輯':'提交'}</p>
+            <p className='font-semibold'>{mode === 'view' ? '編輯' : '提交'}</p>
           </button>
         </form>
       </div>
     </div>
+
   );
 };
 

@@ -47,7 +47,7 @@ const ViewDiaryPage = () => {
     return (
         <div className='flex items-center'>
             <svg 
-                className="w-10 h-10 transform rotate-90 p-0 m-0" 
+                className="w-10 h-10 transform rotate-90 p-0 m-0 text-purple-500" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24" 
@@ -59,7 +59,7 @@ const ViewDiaryPage = () => {
                 <DiaryPage mode={"view"} />
             </div>
             <svg 
-                className="w-10 h-10 transform -rotate-90 p-0 m-0" 
+                className="w-10 h-10 transform -rotate-90 p-0 m-0 text-purple-500" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24" 
