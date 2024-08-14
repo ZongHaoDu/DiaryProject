@@ -67,7 +67,7 @@ const Calendar = (update) => {
                     onClick={() => handleDateClick(`${currentDate.getFullYear()}-${monthString}-${dayString}`)}
                     className={`font-medium border border-purple-100 cursor-pointer p-2 ${hasDiary ? 'bg-purple-100' : 'bg-white'} hover:bg-purple-300`}
                 >
-                    {showMood ? (selectedDiary ? selectedDiary.mood : '無') :i}
+                    {showMood ? (selectedDiary ? (selectedDiary.mood? selectedDiary.mood: '無'):'無') :i}
                 </td>
             );
         }

@@ -173,7 +173,7 @@ const AddCost = ({ stillInput, setStillInput, mode, outputValue, setOutputValue 
           <CustomSelect
             className="border border-gray-300 rounded p-2"
             options={['午餐', '晚餐', '飲料', '交通', '點心', '娛樂']}
-            onChange={(e) => setType(e.target.value)} // 假設 e 是事件對象
+            onChange={(e) => setType(e)} // 假設 e 是事件對象
             value={type}
             mode={mode}
           />
@@ -276,9 +276,10 @@ const CustomSelect = ({ options, onChange, value ,mode }) => {
 };
 
 const DiaryPage = ({mode = ''}) => {
-  if(mode==='add'){
-    //alert("add");
-  }
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const { id } = useParams();
   console.log(mode);
   const [diaries, setDiaries] = useState([]);
@@ -290,10 +291,11 @@ const DiaryPage = ({mode = ''}) => {
   const [stillInput, setStillInput] = useState(false);
   const [cost, setCost] = useState([]);
   const navigate = useNavigate();
+  const storedDiaries = localStorage.getItem('diaries'); 
+  const diaryArray = storedDiaries ? JSON.parse(storedDiaries) : [];
   useEffect(() => {
     if ((mode === 'edit' || mode === 'view') ){
-      const storedDiaries = localStorage.getItem('diaries'); 
-      const diaryArray = storedDiaries ? JSON.parse(storedDiaries) : [];
+      
       const selectedDiary = diaryArray.find(diary => diary.date === id);
       
       if (selectedDiary) {
@@ -308,7 +310,12 @@ const DiaryPage = ({mode = ''}) => {
     }
   }, [mode, id]);
   const handleSubmit = (e) => {
-    if(mode=='view'){
+    if(diaryArray.find(diary => diary.date === date.toLocaleDateString('en-CA'))){
+      alert("今天有日記了");
+      navigate(`/edit/${date.toLocaleDateString('en-CA')}`);
+      return;
+    }
+    if(mode==='view'){
       navigate(`/edit/${id}`);
     }
     e.preventDefault();
@@ -341,7 +348,7 @@ const DiaryPage = ({mode = ''}) => {
     
     if(mode!=='view'){
       alert("新增成功");
-      navigate(`/`);
+      navigate(`/view/${date.toLocaleDateString('en-CA')}`);
     }
     
   };
