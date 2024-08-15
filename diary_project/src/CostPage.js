@@ -122,14 +122,30 @@ const CostPage = () => {
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
+                    
                 </div>
+                {(Object.keys(expenseSummary).length<1)&&(
+                            
+                    <div className='border border-purple-200 w-10/12 place-items-center p-3 ml-5 mt-10 '>
+                        <span className='text-center block p-4'>沒有資料</span>
+                    </div>
+                        
+                )}
                 <div className='w-full max-w-md h-full max-h-md'>
                     <Pie data={chartData} />
                 </div>
             </div>
             <div className='flex-1 mx-10 max-h-[calc(100vh-5rem)] overflow-y-auto mt-20'>
-                <ShowDayCost targetDiaryArray={targetDiaryArray} />
+            {(Object.keys(expenseSummary).length>0)&&(
+                
+                    <ShowDayCost 
+                        targetDiaryArray={targetDiaryArray} 
+                        
+                    />
+                
+            )}
             </div>
+            
         </div>
 
 

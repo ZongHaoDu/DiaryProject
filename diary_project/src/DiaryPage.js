@@ -151,7 +151,12 @@ const AddCost = ({ stillInput, setStillInput, mode, outputValue, setOutputValue 
     };
     setInputValue(newCost);
   }, [name, price,type]);
-
+  useEffect(()=>{
+    if(isNaN(price)&&price!==''){
+      alert("輸入的不是數字");
+      setPrice('');
+    }
+  },[price])
   return (
     <div className="flex flex-col space-y-4 border border-purple-100 p-5">
       {mode !== 'view' && (
@@ -176,7 +181,7 @@ const AddCost = ({ stillInput, setStillInput, mode, outputValue, setOutputValue 
           <CustomSelect
             className="border border-gray-300 rounded p-2"
             options={['午餐', '晚餐', '飲料', '交通', '點心', '娛樂']}
-            onChange={(e) => setType(e)} // 假設 e 是事件對象
+            onChange={(e) => setType(e)} 
             value={type}
             mode={mode}
           />
