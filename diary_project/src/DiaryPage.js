@@ -156,6 +156,7 @@ const AddCost = ({ stillInput, setStillInput, mode, outputValue, setOutputValue 
     <div className="flex flex-col space-y-4 border border-purple-100 p-5">
       {mode !== 'view' && (
         <>
+          <span>品項</span>
           <input
             type="text"
             value={name}
@@ -163,6 +164,7 @@ const AddCost = ({ stillInput, setStillInput, mode, outputValue, setOutputValue 
             placeholder="輸入名稱"
             className="border border-gray-300 rounded p-2"
           />
+          <span>價錢</span>
           <input
             type="text"
             value={price}
@@ -170,6 +172,7 @@ const AddCost = ({ stillInput, setStillInput, mode, outputValue, setOutputValue 
             placeholder="輸入價錢"
             className="border border-gray-300 rounded p-2"
           />
+          <span>種類</span>
           <CustomSelect
             className="border border-gray-300 rounded p-2"
             options={['午餐', '晚餐', '飲料', '交通', '點心', '娛樂']}
@@ -310,44 +313,48 @@ const DiaryPage = ({mode = ''}) => {
     }
   }, [mode, id]);
   const handleSubmit = (e) => {
-    if(diaryArray.find(diary => diary.date === date.toLocaleDateString('en-CA'))){
+    e.preventDefault();
+    if(mode==='view'){
+      navigate(`/edit/${id}`);
+    }else if(mode==='add'&&diaryArray.find(diary => diary.date === date.toLocaleDateString('en-CA'))){
       alert("今天有日記了");
       navigate(`/edit/${date.toLocaleDateString('en-CA')}`);
       return;
     }
-    if(mode==='view'){
-      navigate(`/edit/${id}`);
-    }
-    e.preventDefault();
-    if(stillInput){
-      alert("標籤輸入框還有東西");
-      return;
-    }
-    const newDiary = {
-      date: date.toLocaleDateString('en-CA'),
-      content: content,
-      weather: weather,
-      mood: mood,
-      tags: tags,
-      cost:cost
-    };
-    setDiaries([...diaries, newDiary]);
-    // 獲取已儲存的日記
-    let existingDiaries = JSON.parse(localStorage.getItem('diaries')) || [];
-    // 如果是編輯模式，刪除舊的紀錄
-    if (mode === 'edit') {
-        existingDiaries = existingDiaries.filter(diary => diary.date !== id);
-    }
-    // 儲存新的日記
-    localStorage.setItem('diaries', JSON.stringify([...existingDiaries, newDiary]));
-    setContent('');
-    setWeather('');
-    setMood('');
-    setDate(new Date());
-    setTags([]);
+    
+    
     
     if(mode!=='view'){
-      alert("新增成功");
+      if(stillInput){
+        alert("標籤輸入框還有東西");
+        return;
+      }
+      const newDiary = {
+        date: date.toLocaleDateString('en-CA'),
+        content: content,
+        weather: weather,
+        mood: mood,
+        tags: tags,
+        cost:cost
+      };
+      setDiaries([...diaries, newDiary]);
+      // 獲取已儲存的日記
+      let existingDiaries = JSON.parse(localStorage.getItem('diaries')) || [];
+      // 如果是編輯模式，刪除舊的紀錄
+      if (mode === 'edit') {
+          existingDiaries = existingDiaries.filter(diary => diary.date !== id);
+      }
+      // 儲存新的日記
+      localStorage.setItem('diaries', JSON.stringify([...existingDiaries, newDiary]));
+      setContent('');
+      setWeather('');
+      setMood('');
+      setDate(new Date());
+      setTags([]);
+      if(mode==='add')
+        alert("新增成功");
+      else if (mode==='edit')
+        alert("編輯成功");
       navigate(`/view/${date.toLocaleDateString('en-CA')}`);
     }
     

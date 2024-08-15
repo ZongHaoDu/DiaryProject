@@ -4,9 +4,10 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import DiaryPage from './DiaryPage';
 import EditPage from './EditPage';
-import ViewDiaryPage from './ViewDiaryPage'; // ½T«O¤Þ¤J ViewDiaryPage
-import HomePage from './HomePage'; // ½T«O¤Þ¤J HomePage
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // ½T«O¥¿½T¤Þ¤J Router, Routes, Route
+import ViewDiaryPage from './ViewDiaryPage'; // ç¢ºä¿å¼•å…¥ ViewDiaryPage
+import HomePage from './HomePage'; // ç¢ºä¿å¼•å…¥ HomePage
+import CostPage from './CostPage'; 
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // ç¢ºä¿æ­£ç¢ºå¼•å…¥ Router, Routes, Route
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/add-diary" element={<DiaryPage mode={"add"}/>} />
+        <Route path="/analyze-spending" element={<CostPage/>} />
         <Route path="/view/:id" element={<ViewDiaryPage />} />
         <Route path="/edit/:id" element={<EditPage />} />
       </Routes>

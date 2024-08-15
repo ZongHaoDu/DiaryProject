@@ -48,6 +48,7 @@ const Calendar = (update) => {
         const month = currentDate.getMonth();
         const daysInMonth = getDaysInMonth(year, month);
         const startDay = getStartDayOfMonth(year, month);
+        
         const days = [];
         
         // 添加空白儲存格
@@ -114,13 +115,21 @@ const Calendar = (update) => {
                 >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
-                <button 
-                    className="absolute  right-0  mr-3 my-5 bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600" 
-                    onClick={() => setShowMood(!showMood) }
-                >
-                    顯示心情
-
-                </button>
+                <div className='absolute top-0 right-0 flex'>
+                    <button 
+                        className="mr-3 my-5 bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600" 
+                        onClick={() => navigate(`/analyze-spending`)}
+                    >
+                        分析花費
+                    </button>
+                    <button 
+                        className="my-5 bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600" 
+                        onClick={() => setShowMood(!showMood) }
+                    >
+                        顯示心情
+                    </button>
+                </div>
+                
             </div>
 
             <table className="w-full border-collapse my-10 px-10 py-10 border-2 border-purple-300">
