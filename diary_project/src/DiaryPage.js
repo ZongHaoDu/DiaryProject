@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 
-const AddButton = ({ inputValue,setInputValue,mode,outputValue,setOutputValue}) => {
+const AddButton = ({ inputValue,setInputValue,mode,outputValue,setOutputValue,setStillInput}) => {
 
   const handleAddTag = () => {
     
@@ -19,6 +19,7 @@ const AddButton = ({ inputValue,setInputValue,mode,outputValue,setOutputValue}) 
       }
       if(canSubmit){
         setOutputValue([...outputValue, inputValue]);
+        setStillInput(false);
         setInputValue('');  
       }
       else{
@@ -118,6 +119,7 @@ const AddTag = ({ stillInput, setStillInput, mode, outputValue, setOutputValue }
           mode={mode}
           outputValue={outputValue}
           setOutputValue={setOutputValue}
+          setStillInput={setStillInput}
         />
       </div>
       <ShowDivs
@@ -136,12 +138,16 @@ const AddCost = ({ stillInput, setStillInput, mode, outputValue, setOutputValue 
   const [type, setType] = useState('');
   const [inputValue, setInputValue] = useState('');
   useEffect(() => {
-    if (inputValue === '') {
+    // 重置所有字段
+    if (!inputValue.name && !inputValue.price && !inputValue.type) {
       setName('');
       setPrice('');
       setType('');
+      setStillInput(false);
+    } else {
+      setStillInput(true);
     }
-  }, [inputValue]);
+  }, [inputValue, setStillInput]);
   useEffect(() => {
     console.log(type);
     const newCost = {
@@ -157,6 +163,7 @@ const AddCost = ({ stillInput, setStillInput, mode, outputValue, setOutputValue 
       setPrice('');
     }
   },[price])
+
   return (
     <div className="flex flex-col space-y-4 border border-purple-100 p-5">
       {mode !== 'view' && (
@@ -194,6 +201,7 @@ const AddCost = ({ stillInput, setStillInput, mode, outputValue, setOutputValue 
         mode={mode}
         outputValue={outputValue}
         setOutputValue={setOutputValue}
+        setStillInput={setStillInput}
       />
       <ShowDivs
         outputValue={outputValue}
@@ -331,7 +339,8 @@ const DiaryPage = ({mode = ''}) => {
     
     if(mode!=='view'){
       if(stillInput){
-        alert("標籤輸入框還有東西");
+
+        alert("輸入框還有東西沒有被添加");
         return;
       }
       const newDiary = {

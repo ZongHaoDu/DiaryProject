@@ -91,8 +91,8 @@ const CostPage = () => {
         setCurrentDate(newDate);
     };
     return (
-        <div className='relative flex py-10 m-10 shadow-custom-shadow rounded-lg'>
-            <div className="flex flex-col items-center h-full max-h-screen justify-center p-4 mr-10 flex-1">
+        <div className='relative flex py-10 m-10 shadow-custom-shadow rounded-lg h-full'>
+            <div className="flex flex-col items-center h-full justify-between p-4 mr-10 flex-1">
                 <button
                     type='button'
                     className="absolute top-0 right-0 mt-10 mr-10 bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600"
@@ -102,7 +102,7 @@ const CostPage = () => {
                 </button>
                 <div className="w-full flex items-center justify-center space-x-4 mb-5">
                     <svg 
-                        className="w-12 h-12 transform rotate-90 text-purple-500"
+                        className="w-12 h-12 transform rotate-90 text-purple-500 cursor-pointer"
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
@@ -114,7 +114,7 @@ const CostPage = () => {
                         {currentDate.getFullYear()}年{currentDate.getMonth() + 1}月
                     </div>
                     <svg 
-                        className="w-12 h-12 transform -rotate-90 text-purple-500"
+                        className="w-12 h-12 transform -rotate-90 text-purple-500 cursor-pointer"
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
@@ -122,31 +122,26 @@ const CostPage = () => {
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                    
                 </div>
-                {(Object.keys(expenseSummary).length<1)&&(
-                            
-                    <div className='border border-purple-200 w-10/12 place-items-center p-3 ml-5 mt-10 '>
-                        <span className='text-center block p-4'>沒有資料</span>
+
+                {Object.keys(expenseSummary).length < 1 ? (
+                    <div className='flex items-center justify-center border border-purple-200 w-11/12 h-[60%]'>
+                        <span className='text-center block text-lg'>沒有資料</span>
                     </div>
-                        
+                ) : (
+                    <div className='w-full max-w-md h-full max-h-md'>
+                        <Pie data={chartData} />
+                    </div>
                 )}
-                <div className='w-full max-w-md h-full max-h-md'>
-                    <Pie data={chartData} />
-                </div>
-            </div>
-            <div className='flex-1 mx-10 max-h-[calc(100vh-5rem)] overflow-y-auto mt-20'>
-            {(Object.keys(expenseSummary).length>0)&&(
-                
-                    <ShowDayCost 
-                        targetDiaryArray={targetDiaryArray} 
-                        
-                    />
-                
-            )}
             </div>
             
+            <div className='flex-1 mx-10 max-h-[calc(100vh-5rem)] overflow-y-auto mt-20'>
+                {Object.keys(expenseSummary).length > 0 && (
+                    <ShowDayCost targetDiaryArray={targetDiaryArray} />
+                )}
+            </div>
         </div>
+
 
 
 
