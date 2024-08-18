@@ -10,7 +10,7 @@ const Calendar = (update) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [showMood, setShowMood] = useState(false);
     const navigate = useNavigate();
-    const storedDiaries = localStorage.getItem('diaries'); 
+    const storedDiaries = localStorage.getItem('diaries');
     const diaryArray = storedDiaries ? JSON.parse(storedDiaries) : [];
     const [diaries, setDiaries] = useState([]);
     
@@ -18,7 +18,13 @@ const Calendar = (update) => {
         const storedDiaries = localStorage.getItem('diaries'); 
         const diaryArray = storedDiaries ? JSON.parse(storedDiaries) : [];
         setDiaries(diaryArray);
+
+        if (storedDiaries) {
+            const parsedDiaries = JSON.parse(storedDiaries);
+            setDiaries(parsedDiaries.diary || []); // 確保 `diary` 屬性存在且為數組
+        }
     }, [update]); // 監控 update 變化
+
     const getDaysInMonth = (year, month) => {
         return new Date(year, month + 1, 0).getDate();
     };

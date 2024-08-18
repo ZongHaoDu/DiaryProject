@@ -6,65 +6,46 @@ import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 
-const AddButton = ({ inputValue,setInputValue,mode,outputValue,setOutputValue,setStillInput}) => {
-
+const AddButton = ({ inputValue, setInputValue, mode, outputValue, setOutputValue, setStillInput, className }) => {
   const handleAddTag = () => {
-    
-    if (inputValue && !outputValue.includes(inputValue)) {
-      let canSubmit = true;
-      if (Object.keys(inputValue).length > 0) {
-        for (const [key, value] of Object.entries(inputValue)) {
-          if(value=='') canSubmit = false;
-        }
+      if(inputValue && outputValue.includes(inputValue)){
+        alert("已經添加過了");
+        setInputValue('');
       }
-      if(canSubmit){
-        setOutputValue([...outputValue, inputValue]);
-        setStillInput(false);
-        setInputValue('');  
+      if (inputValue && !outputValue.includes(inputValue)) {
+          let canSubmit = true;
+          if (Object.keys(inputValue).length > 0) {
+              for (const [key, value] of Object.entries(inputValue)) {
+                  if (value === '') canSubmit = false;
+              }
+          }
+          if (canSubmit) {
+              setOutputValue([...outputValue, inputValue]);
+              setStillInput(false);
+              setInputValue('');
+          } else {
+              alert("有項目是空的");
+          }
       }
-      else{
-        alert("有項目是空的");
-      }
-      
-    }
   };
-  
 
-  
   return (
-    <div className="flex flex-col space-y-2">
-      {mode !== 'view' && (
-        <div className="flex space-x-2">
-          <button
-            type="button"
-            onClick={handleAddTag}
-            className="bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600"
-          >
-            添加
-          </button>
-        </div>
-      )}
-      
-      {/* <div className="flex flex-wrap gap-2 py-2">
-        {outputValue.map((item, index) => (
-          <div key={index} className="h-6 bg-purple-600 text-white px-3 py-5 rounded-full flex items-center space-x-2">
-            <span>{item}</span>
-            {mode !== 'view' && (
-              <button
-                type='button'
-                className="text-white hover:text-red-700"
-                onClick={() => setOutputValue(outputValue.filter((t) => t !== item))}
-                
-              >
-                x
-              </button>
-            )}
-          </div>
-        ))}
-      </div> */}
-    </div>
+      <div className="flex flex-col space-y-2">
+          {mode !== 'view' && (
+              <div className="flex space-x-2 items-center">
+                  <button
+                      type="button"
+                      onClick={handleAddTag}
+                      className={`bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600 ${className}`}
+                  >
+                      添加
+                  </button>
+              </div>
+          )}
+      </div>
   );
-}
+};
+
 const ShowDivs = ({outputValue,setOutputValue,mode,showtype}) =>{
   return(
     <div className="flex flex-wrap gap-2 py-2">
@@ -86,52 +67,100 @@ const ShowDivs = ({outputValue,setOutputValue,mode,showtype}) =>{
     </div>
   )
 }
-const AddTag = ({ stillInput, setStillInput, mode, outputValue, setOutputValue }) => {
+const AddTag = ({ exitArray, stillInput, setStillInput, mode, outputValue, setOutputValue }) => {
   const [inputValue, setInputValue] = useState('');
-  
+
   useEffect(() => {
-    if(inputValue !== ''){
-      setStillInput(true);
-    } else {
-      setStillInput(false);
-    }
+      setStillInput(inputValue !== '');
   }, [inputValue, setStillInput]);
 
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
+  return (
+      <div className="flex flex-col space-y-2">
+          <div className="flex space-x-2 items-center">
+              {mode !== 'view' && (
+                  <AutoComplete
+                      exitArray={exitArray}
+                      inputValue={inputValue}
+                      setInputValue={setInputValue}
+                      className="flex-1"
+                  />
+              )}
+              <AddButton
+                  inputValue={inputValue}
+                  setInputValue={setInputValue}
+                  mode={mode}
+                  outputValue={outputValue}
+                  setOutputValue={setOutputValue}
+                  setStillInput={setStillInput}
+                  className="ml-2 h-12" // 高度一致
+              />
+          </div>
+          <ShowDivs
+              outputValue={outputValue}
+              setOutputValue={setOutputValue}
+              mode={mode}
+              showtype='tag'
+          />
+      </div>
+  );
+};
+
+
+const AutoComplete = ({ exitArray, inputValue, setInputValue, className }) => {
+  const [options, setOptions] = useState([]);
+  const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+      if (inputValue) {
+          const filteredOptions = exitArray.filter(option =>
+              option.toLowerCase().includes(inputValue.toLowerCase())
+          );
+          setOptions(filteredOptions);
+      } else {
+          setOptions([]);
+      }
+      if(inputValue==='')
+        setIsOpen(true);
+  }, [inputValue, exitArray]);
+
+  const handleInputChange = (event) => {
+      setInputValue(event.target.value);
+  };
+
+  const handleOptionClick = (option) => {
+      setInputValue(option);
+      setOptions([]);
+      setIsOpen(false);
   };
 
   return (
-    <div className="flex flex-col space-y-2">
-      <div className="flex space-x-2">
-        {mode !== 'view' && (
+      <div className={`relative w-full ${className}`}>
           <input
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            placeholder="輸入標籤"
-            className="border border-gray-300 rounded p-2 flex-1"
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder="輸入標籤"
+              className="border border-gray-300 rounded p-2 w-full h-12"
           />
-        )}
-        <AddButton
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          mode={mode}
-          outputValue={outputValue}
-          setOutputValue={setOutputValue}
-          setStillInput={setStillInput}
-        />
+          {options.length > 0 && isOpen && (
+              <div className="z-50 absolute top-full left-0 mt-1 border border-gray-300 bg-white rounded shadow-lg w-full max-h-40 overflow-y-auto">
+                  {options.map((option, index) => (
+                      <div
+                          key={index}
+                          className="cursor-pointer p-2 hover:bg-gray-100"
+                          onClick={() => handleOptionClick(option)}
+                      >
+                          {option}
+                      </div>
+                  ))}
+              </div>
+          )}
       </div>
-      <ShowDivs
-        className="text-white hover:text-red-700"
-        outputValue={outputValue}
-        setOutputValue={setOutputValue}
-        mode={mode}
-        showtype = 'tag'
-      />
-    </div>
   );
 };
+
+
+
 const AddCost = ({ stillInput, setStillInput, mode, outputValue, setOutputValue }) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -307,8 +336,10 @@ const DiaryPage = ({mode = ''}) => {
   const [stillInput, setStillInput] = useState(false);
   const [cost, setCost] = useState([]);
   const navigate = useNavigate();
-  const storedDiaries = localStorage.getItem('diaries'); 
-  const diaryArray = storedDiaries ? JSON.parse(storedDiaries) : [];
+  const storedDiaries = localStorage.getItem('diaries') ;
+  const diaryArray = storedDiaries ? JSON.parse(storedDiaries).diary || [] : [];
+  const tagArray = storedDiaries ? JSON.parse(storedDiaries).tag || [] : [];
+  
   useEffect(() => {
     if ((mode === 'edit' || mode === 'view') ){
       
@@ -327,52 +358,58 @@ const DiaryPage = ({mode = ''}) => {
   }, [mode, id]);
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(mode==='view'){
+  
+    if (mode === 'view') {
       navigate(`/edit/${id}`);
-    }else if(mode==='add'&&diaryArray.find(diary => diary.date === date.toLocaleDateString('en-CA'))){
+    } else if (mode === 'add' && diaryArray.find(diary => diary.date === date.toLocaleDateString('en-CA'))) {
       alert("今天有日記了");
       navigate(`/edit/${date.toLocaleDateString('en-CA')}`);
       return;
     }
-    
-    
-    
-    if(mode!=='view'){
-      if(stillInput){
-
+  
+    if (mode !== 'view') {
+      if (stillInput) {
         alert("輸入框還有東西沒有被添加");
         return;
       }
+  
       const newDiary = {
         date: date.toLocaleDateString('en-CA'),
         content: content,
         weather: weather,
         mood: mood,
         tags: tags,
-        cost:cost
+        cost: cost
       };
-      setDiaries([...diaries, newDiary]);
-      // 獲取已儲存的日記
-      let existingDiaries = JSON.parse(localStorage.getItem('diaries')) || [];
-      // 如果是編輯模式，刪除舊的紀錄
+  
+      const storedData = localStorage.getItem('diaries');
+      const existingData = storedData ? JSON.parse(storedData) : { diary: [], tag: [] };
+  
       if (mode === 'edit') {
-          existingDiaries = existingDiaries.filter(diary => diary.date !== id);
+        existingData.diary = existingData.diary.filter(diary => diary.date !== id);
       }
-      // 儲存新的日記
-      localStorage.setItem('diaries', JSON.stringify([...existingDiaries, newDiary]));
+  
+      const newTags = Array.from(new Set([...existingData.tag, ...tags]));
+      localStorage.setItem('diaries', JSON.stringify({ ...existingData, diary: [...existingData.diary, newDiary], tag: newTags }));
+  
       setContent('');
       setWeather('');
       setMood('');
       setDate(new Date());
       setTags([]);
-      if(mode==='add')
+      setCost([]);
+  
+      if (mode === 'add') {
         alert("新增成功");
-      else if (mode==='edit')
+      } else if (mode === 'edit') {
         alert("編輯成功");
+      }
+  
       navigate(`/view/${date.toLocaleDateString('en-CA')}`);
     }
-    
   };
+  
+  
   
   const handleContentChange = (e) => {
     setContent(e.target.value);
@@ -399,7 +436,7 @@ const DiaryPage = ({mode = ''}) => {
           {mode === 'add' ? '新增日記' : mode === 'edit' ? '編輯日記' : mode === 'view' ? '查看日記' : '未知模式'}
         </h1>
         <form onSubmit={handleSubmit} className="m-2">
-          <div>
+          <div className='my-10'> 
             <p className='my-3'>日期</p>
             <DatePicker
               selected={date}
@@ -409,7 +446,7 @@ const DiaryPage = ({mode = ''}) => {
               disabled={mode === 'view'}
             />
           </div>
-          <div>
+          <div className='my-10'>
             <p className='my-3'>天氣</p>
             <CustomSelect
               options={['超熱', '超冷', '晴天', '多雲', '下雨', 'test', 'test', 'test', 'test']}
@@ -418,7 +455,7 @@ const DiaryPage = ({mode = ''}) => {
               mode={mode}
             />
           </div>
-          <div>
+          <div className='my-10'>
             <p className='my-3'>心情</p>
             <CustomSelect
               options={['超興奮', '開心', '普通', '憂鬱', '不起勁', '生氣']}
@@ -427,7 +464,7 @@ const DiaryPage = ({mode = ''}) => {
               mode={mode}
             />
           </div>
-          <div>
+          <div className='my-10'>
             <p className='my-3'>內容</p>
             <textarea
               disabled={mode === 'view'}
@@ -438,11 +475,11 @@ const DiaryPage = ({mode = ''}) => {
               className="border border-gray-300 rounded p-2 w-full bg-white"
             />
           </div>
-          <div>
+          <div className='my-10'>
             <p className='my-3'>標籤</p>
-            <AddTag stillInput={stillInput} setStillInput={setStillInput} mode={mode} outputValue={tags} setOutputValue={setTags} disabled={mode === 'view'}/>
+            <AddTag exitArray={tagArray} stillInput={stillInput} setStillInput={setStillInput} mode={mode} outputValue={tags} setOutputValue={setTags} disabled={mode === 'view'}/>
           </div>
-          <div>
+          <div className='my-10'>
             <p className='my-3'>花費</p>
             <AddCost stillInput={stillInput} setStillInput={setStillInput} mode={mode} outputValue={cost} setOutputValue={setCost} disabled={mode === 'view'}/>
           </div>

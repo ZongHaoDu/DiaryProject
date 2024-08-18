@@ -9,16 +9,20 @@ const ShowDayCost = ({ targetDiaryArray }) => {
     return (
         <div className='h-fs'>
             {targetDiaryArray.map(diary => (
+                diary.cost.length > 0 && (
                 <div key={diary.date} className="mb-4 p-2 border border-gray-200 rounded">
+                    
                     <div className="font-bold text-lg mb-2">{diary.date}</div>
-                    {diary.cost.map((expense, index) => (
-                        <div key={index} className="flex justify-between mb-1">
-                            <span>{expense.name}</span>
-                            <span>{expense.type}</span>
-                            <span>{expense.price}</span>
-                        </div>
-                    ))}
-                </div>
+                    {
+                        diary.cost.map((expense, index) => (
+                            <div key={index} className="flex justify-between mb-1">
+                                <span>{expense.name}</span>
+                                <span>{expense.type}</span>
+                                <span>{expense.price}</span>
+                            </div>
+                        ))
+                     }
+                </div>)
             ))}
         </div>
     );
@@ -33,7 +37,7 @@ const CostPage = () => {
     const [expenseSummary,setExpenseSummary]=useState([]);
     // 過濾出當月的日記資料
     useEffect(() => {
-        const filteredDiaries = diaryArray.filter(diary => {
+        const filteredDiaries = diaryArray.diary.filter(diary => {
             const diaryDate = new Date(diary.date); // 將日記的日期轉換為 Date 物件
             return diaryDate.getMonth() === currentDate.getMonth()
                 && diaryDate.getFullYear() === currentDate.getFullYear(); 
@@ -91,7 +95,7 @@ const CostPage = () => {
         setCurrentDate(newDate);
     };
     return (
-        <div className='relative flex py-10 m-10 shadow-custom-shadow rounded-lg h-full'>
+        <div className='min-h-[calc(100vh-5rem)] relative flex py-10 m-10 shadow-custom-shadow rounded-lg h-full'>
             <div className="flex flex-col items-center h-full justify-between p-4 mr-10 flex-1">
                 <button
                     type='button'
