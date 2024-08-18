@@ -337,9 +337,10 @@ const DiaryPage = ({mode = ''}) => {
   const [cost, setCost] = useState([]);
   const navigate = useNavigate();
   const storedDiaries = localStorage.getItem('diaries') ;
-  const diaryArray = storedDiaries ? JSON.parse(storedDiaries).diary || [] : [];
-  const tagArray = storedDiaries ? JSON.parse(storedDiaries).tag || [] : [];
-  
+  const storedTags = localStorage.getItem('tags') ;
+  const diaryArray = storedDiaries ? JSON.parse(storedDiaries) || [] : [];
+  const tagArray = storedTags ? JSON.parse(storedTags) || [] : [];
+
   useEffect(() => {
     if ((mode === 'edit' || mode === 'view') ){
       
@@ -361,53 +362,53 @@ const DiaryPage = ({mode = ''}) => {
   
     if (mode === 'view') {
       navigate(`/edit/${id}`);
-    } else if (mode === 'add' && diaryArray.find(diary => diary.date === date.toLocaleDateString('en-CA'))) {
+      return;
+    }
+    
+    if (mode === 'add' && diaryArray.some(diary => diary.date === date.toLocaleDateString('en-CA'))) {
       alert("今天有日記了");
       navigate(`/edit/${date.toLocaleDateString('en-CA')}`);
       return;
     }
   
-    if (mode !== 'view') {
-      if (stillInput) {
-        alert("輸入框還有東西沒有被添加");
-        return;
-      }
-  
-      const newDiary = {
-        date: date.toLocaleDateString('en-CA'),
-        content: content,
-        weather: weather,
-        mood: mood,
-        tags: tags,
-        cost: cost
-      };
-  
-      const storedData = localStorage.getItem('diaries');
-      const existingData = storedData ? JSON.parse(storedData) : { diary: [], tag: [] };
-  
-      if (mode === 'edit') {
-        existingData.diary = existingData.diary.filter(diary => diary.date !== id);
-      }
-  
-      const newTags = Array.from(new Set([...existingData.tag, ...tags]));
-      localStorage.setItem('diaries', JSON.stringify({ ...existingData, diary: [...existingData.diary, newDiary], tag: newTags }));
-  
-      setContent('');
-      setWeather('');
-      setMood('');
-      setDate(new Date());
-      setTags([]);
-      setCost([]);
-  
-      if (mode === 'add') {
-        alert("新增成功");
-      } else if (mode === 'edit') {
-        alert("編輯成功");
-      }
-  
-      navigate(`/view/${date.toLocaleDateString('en-CA')}`);
+    if (stillInput) {
+      alert("輸入框還有東西沒有被添加");
+      return;
     }
+  
+    const newDiary = {
+      date: date.toLocaleDateString('en-CA'),
+      content: content,
+      weather: weather,
+      mood: mood,
+      tags: tags,
+      cost: cost
+    };
+  
+    let updatedDiaries = [...diaryArray];
+    let updatedTags = [...tagArray, ...tags];
+  
+    if (mode === 'edit') {
+      updatedDiaries = updatedDiaries.filter(diary => diary.date !== id);
+    }
+  
+    updatedDiaries.push(newDiary);
+    updatedTags = Array.from(new Set(updatedTags)); // 去重
+  
+    localStorage.setItem('diaries', JSON.stringify(updatedDiaries));
+    localStorage.setItem('tags', JSON.stringify(updatedTags));
+  
+    setContent('');
+    setWeather('');
+    setMood('');
+    setDate(new Date());
+    setTags([]);
+    setCost([]);
+  
+    alert(mode === 'add' ? "新增成功" : "編輯成功");
+    navigate(`/view/${date.toLocaleDateString('en-CA')}`);
   };
+  
   
   
   

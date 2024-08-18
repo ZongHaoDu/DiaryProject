@@ -21,7 +21,7 @@ const Calendar = (update) => {
 
         if (storedDiaries) {
             const parsedDiaries = JSON.parse(storedDiaries);
-            setDiaries(parsedDiaries.diary || []); // 確保 `diary` 屬性存在且為數組
+            setDiaries(parsedDiaries || []); // 確保 `diary` 屬性存在且為數組
         }
     }, [update]); // 監控 update 變化
 
@@ -173,7 +173,7 @@ const HomePage = () => {
                 </button>
                 <button 
                     className="my-5 bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600" 
-                    onClick={() => {localStorage.removeItem('diaries') ;setUpdate(update+1);}}
+                    onClick={() => {localStorage.removeItem('diaries') ;localStorage.removeItem('tags') ;setUpdate(update+1);}}
                 >
                     刪除全部日記
                 </button>

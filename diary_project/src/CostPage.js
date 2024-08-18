@@ -37,7 +37,7 @@ const CostPage = () => {
     const [expenseSummary,setExpenseSummary]=useState([]);
     // 過濾出當月的日記資料
     useEffect(() => {
-        const filteredDiaries = diaryArray.diary.filter(diary => {
+        const filteredDiaries = diaryArray.filter(diary => {
             const diaryDate = new Date(diary.date); // 將日記的日期轉換為 Date 物件
             return diaryDate.getMonth() === currentDate.getMonth()
                 && diaryDate.getFullYear() === currentDate.getFullYear(); 
