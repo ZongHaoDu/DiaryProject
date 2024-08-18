@@ -12,9 +12,9 @@ const ViewDiaryPage = () => {
         const storedData = localStorage.getItem('diaries');
         if (storedData) {
             const parsedData = JSON.parse(storedData);
-            if (parsedData.diary) {
+            if (parsedData) {
                 // 將日記按日期升序排序
-                const sortedDiaries = [...parsedData.diary].sort((a, b) => new Date(a.date) - new Date(b.date));
+                const sortedDiaries = [...parsedData].sort((a, b) => new Date(a.date) - new Date(b.date));
                 setDiaryArray(sortedDiaries);
             }
         }
