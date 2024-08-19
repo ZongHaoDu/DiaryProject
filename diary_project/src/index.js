@@ -7,6 +7,7 @@ import EditPage from './EditPage';
 import ViewDiaryPage from './ViewDiaryPage'; // 確保引入 ViewDiaryPage
 import HomePage from './HomePage'; // 確保引入 HomePage
 import CostPage from './CostPage'; 
+import ToDoPage from './ToDoPage';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // 確保正確引入 Router, Routes, Route
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -19,15 +20,16 @@ const App = () => {
         <Route path="/analyze-spending" element={<CostPage/>} />
         <Route path="/view/:id" element={<ViewDiaryPage />} />
         <Route path="/edit/:id" element={<EditPage />} />
+        <Route path="/todo" element={<ToDoPage/>}/>
       </Routes>
     </Router>
   );
 };
 
 root.render(
-  <React.StrictMode>
+  //<React.StrictMode>
     <App />
-  </React.StrictMode>
+  //</React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
