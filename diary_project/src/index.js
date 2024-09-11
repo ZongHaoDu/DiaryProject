@@ -8,7 +8,7 @@ import ViewDiaryPage from './ViewDiaryPage'; // 確保引入 ViewDiaryPage
 import HomePage from './HomePage'; // 確保引入 HomePage
 import CostPage from './CostPage'; 
 import ToDoPage from './ToDoPage';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // 確保正確引入 Router, Routes, Route
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'; // 確保正確引入 Router, Routes, Route
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const App = () => {
