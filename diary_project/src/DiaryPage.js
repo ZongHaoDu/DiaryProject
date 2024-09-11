@@ -498,3 +498,7 @@ const DiaryPage = ({mode = ''}) => {
 };
 
 export default DiaryPage;
+
+
+export {AddTag};
+export{ShowDivs};
